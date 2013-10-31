@@ -151,12 +151,12 @@ public class SpeedRider implements ApplicationListener {
 
 		batch.begin();
 		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		font.draw(batch, score, 721, 460);
+		font.draw(batch, score, 720, 460);
 		batch.end();
 
 		batch.begin();
 		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		font.draw(batch, misses, 25, 460);
+		font.draw(batch, misses, 26, 460);
 		batch.end();
 	}
 
