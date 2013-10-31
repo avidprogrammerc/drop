@@ -119,6 +119,12 @@ public class SpeedRider implements ApplicationListener {
 			if (TimeUtils.nanoTime() - lastDropTime > 1000000000)
 				spawnRaindrop();
 		if (numCatches >= 10)
+			if (TimeUtils.nanoTime() - lastDropTime > 750000000)
+				spawnRaindrop();
+		if (numCatches >= 20)
+			if (TimeUtils.nanoTime() - lastDropTime > 500000000)
+				spawnRaindrop();
+		if (numCatches >= 30)
 			if (TimeUtils.nanoTime() - lastDropTime > 250000000)
 				spawnRaindrop();
 
@@ -128,7 +134,9 @@ public class SpeedRider implements ApplicationListener {
 			if (numCatches < 10)
 				raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
 			if (numCatches >= 10)
-				raindrop.y -= 1000 * Gdx.graphics.getDeltaTime();
+				raindrop.y -= 300 * Gdx.graphics.getDeltaTime();
+			if (numCatches >= 30)
+				raindrop.y -= 315 * Gdx.graphics.getDeltaTime();
 			if (raindrop.y + 64 < 0) {
 				iter.remove();
 				numMisses++;
@@ -151,12 +159,12 @@ public class SpeedRider implements ApplicationListener {
 
 		batch.begin();
 		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		font.draw(batch, score, 720, 460);
+		font.draw(batch, score, 721, 460);
 		batch.end();
 
 		batch.begin();
 		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		font.draw(batch, misses, 26, 460);
+		font.draw(batch, misses, 25, 460);
 		batch.end();
 	}
 
