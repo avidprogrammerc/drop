@@ -111,7 +111,6 @@ public class SpeedRider implements ApplicationListener {
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos);
 			bucket.x = touchPos.x - 64 / 2;
-			bucket.y = touchPos.y - 64 / 2;
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.LEFT))
@@ -123,10 +122,7 @@ public class SpeedRider implements ApplicationListener {
 			bucket.x = 0;
 		if (bucket.x > 800 - 64)
 			bucket.x = 800 - 64;
-		if (bucket.y < 0)
-			bucket.y = 0;
-		if (bucket.y > 480 - 64)
-			bucket.y = 480 - 64;
+		
 
 		if (numCatches < 10)
 			if (TimeUtils.nanoTime() - lastDropTime > 1000000000)
