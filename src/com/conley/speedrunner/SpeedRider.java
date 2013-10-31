@@ -15,11 +15,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -45,6 +47,7 @@ public class SpeedRider implements ApplicationListener {
 	String score;
 	String misses;
 	BitmapFont font;
+	FreeTypeFontGenerator generator;
 
 	@Override
 	public void create() {
@@ -78,7 +81,9 @@ public class SpeedRider implements ApplicationListener {
 		numCatches = 0;
 		score = "Score: 0";
 		misses = "Missed catches: 0";
-		font = new BitmapFont();
+		generator = new FreeTypeFontGenerator(Gdx.files.internal("Track.ttf"));
+		font = generator.generateFont(14);
+		font.setColor(Color.YELLOW);
 	}
 
 	@Override
@@ -94,7 +99,7 @@ public class SpeedRider implements ApplicationListener {
 	public void render() {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
+		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
@@ -166,13 +171,11 @@ public class SpeedRider implements ApplicationListener {
 		batch.end();
 
 		batch.begin();
-		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		font.draw(batch, score, 721, 460);
+		font.draw(batch, score, 25, 460);
 		batch.end();
 
 		batch.begin();
-		font.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		font.draw(batch, misses, 25, 460);
+		font.draw(batch, misses, 25, 445);
 		batch.end();
 	}
 
