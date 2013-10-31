@@ -1,3 +1,11 @@
+/***********************************************************************
+ * This is the core file for the Speed Runner game
+ * This file should only really be modified.
+ * 
+ * @author     Chris Conley
+ * @version    2013.10.31
+ ***********************************************************************/
+
 package com.conley.speedrider;
 
 import java.util.Iterator;
