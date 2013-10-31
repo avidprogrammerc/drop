@@ -6,7 +6,7 @@
  * @version    2013.10.31
  ***********************************************************************/
 
-package com.conley.speedrider;
+package com.conley.speedrunner;
 
 import java.util.Iterator;
 
