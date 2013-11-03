@@ -6,7 +6,7 @@
  * @version    2013.10.31
  ***********************************************************************/
 
-package com.conley.speedrunner;
+package com.conley.drop;
 
 import java.util.Iterator;
 
@@ -28,16 +28,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
-public class SpeedRider implements ApplicationListener {
+public class Drop implements ApplicationListener {
+	Bucket bucket;
 	Texture dropImage;
-	Texture bucketImage;
 	Sound dropSound;
 	Music rainMusic;
 
 	OrthographicCamera camera;
 	SpriteBatch batch;
 
-	Rectangle bucket;
 	Array<Rectangle> raindrops;
 
 	long lastDropTime;
@@ -53,7 +52,7 @@ public class SpeedRider implements ApplicationListener {
 	public void create() {
 		// load the images for the droplet and the bucket, 64x64 pixels each
 		dropImage = new Texture(Gdx.files.internal("droplet.png"));
-		bucketImage = new Texture(Gdx.files.internal("bucket.png"));
+		bucket = new Bucket(800 / 2 - 64 / 2, 0);
 
 		// load the drop sound effect and the rain background "music"
 		dropSound = Gdx.audio.newSound(Gdx.files.internal("droplet.wav"));
@@ -67,12 +66,6 @@ public class SpeedRider implements ApplicationListener {
 		camera.setToOrtho(false, 800, 480);
 
 		batch = new SpriteBatch();
-
-		bucket = new Rectangle();
-		bucket.x = 800 / 2 - 64 / 2;
-		bucket.y = 0;
-		bucket.width = 64;
-		bucket.height = 64;
 
 		raindrops = new Array<Rectangle>();
 		spawnRaindrop();
@@ -89,7 +82,7 @@ public class SpeedRider implements ApplicationListener {
 	@Override
 	public void dispose() {
 		dropImage.dispose();
-		bucketImage.dispose();
+		bucket.disposeImage();
 		dropSound.dispose();
 		rainMusic.dispose();
 		batch.dispose();
@@ -99,30 +92,29 @@ public class SpeedRider implements ApplicationListener {
 	public void render() {
 		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
+
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		batch.draw(bucketImage, bucket.x, bucket.y);
+		batch.draw(bucket.getBucketImage(), bucket.getX(), bucket.getY());
 		batch.end();
 
 		if (Gdx.input.isTouched()) {
 			Vector3 touchPos = new Vector3();
 			touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touchPos);
-			bucket.x = touchPos.x - 64 / 2;
+			bucket.setX(touchPos.x - 64 / 2);
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.LEFT))
-			bucket.x -= 300 * Gdx.graphics.getDeltaTime();
+			bucket.setX(bucket.getX() - 300 * Gdx.graphics.getDeltaTime());
 		if (Gdx.input.isKeyPressed(Keys.RIGHT))
-			bucket.x += 300 * Gdx.graphics.getDeltaTime();
+			bucket.setX(bucket.getX() + 300 * Gdx.graphics.getDeltaTime());
 
-		if (bucket.x < 0)
-			bucket.x = 0;
-		if (bucket.x > 800 - 64)
-			bucket.x = 800 - 64;
-		
+		if (bucket.getX() < 0)
+			bucket.setX(0);
+		if (bucket.getX() > 800 - 64)
+			bucket.setX(800 - 64);
 
 		if (numCatches < 10)
 			if (TimeUtils.nanoTime() - lastDropTime > 1000000000)
@@ -151,7 +143,7 @@ public class SpeedRider implements ApplicationListener {
 				numMisses++;
 				misses = "Missed catches: " + numMisses;
 			}
-			if (raindrop.overlaps(bucket)) {
+			if (raindrop.overlaps(bucket.bucket)) {
 				dropSound.play();
 				iter.remove();
 				numCatches++;
@@ -160,7 +152,7 @@ public class SpeedRider implements ApplicationListener {
 		}
 
 		batch.begin();
-		batch.draw(bucketImage, bucket.x, bucket.y);
+		batch.draw(bucket.getBucketImage(), bucket.getX(), bucket.getY());
 		for (Rectangle raindrop : raindrops) {
 			batch.draw(dropImage, raindrop.x, raindrop.y);
 		}
