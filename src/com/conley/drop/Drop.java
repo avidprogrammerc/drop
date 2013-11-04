@@ -10,7 +10,7 @@ package com.conley.drop;
 
 import java.util.Iterator;
 
-import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
@@ -27,7 +27,7 @@ import com.conley.drop.bucket.Bucket;
 import com.conley.drop.dropTypes.AcidRainDrop;
 import com.conley.drop.dropTypes.RainDrop;
 
-public class Drop implements ApplicationListener {
+public class Drop extends Game {
 	Bucket bucket;
 	RainDrop rainDrop;
 	AcidRainDrop acidRainDrop;
@@ -111,23 +111,23 @@ public class Drop implements ApplicationListener {
 		if (numCatches < 10)
 			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 1000000000) {
 				rainDrop.spawnRaindrop();
-				acidRainDrop.spawnRaindrop();
 			}
 		if (numCatches >= 10)
 			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 750000000) {
 				rainDrop.spawnRaindrop();
-				acidRainDrop.spawnRaindrop();
 			}
 		if (numCatches >= 20)
 			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 500000000) {
 				rainDrop.spawnRaindrop();
-				acidRainDrop.spawnRaindrop();
 			}
 		if (numCatches >= 30)
 			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 250000000) {
 				rainDrop.spawnRaindrop();
-				acidRainDrop.spawnRaindrop();
 			}
+
+		if (TimeUtils.nanoTime() - acidRainDrop.getLastDropTime() > 1000000000) {
+			acidRainDrop.spawnRaindrop();
+		}
 
 		Iterator<Rectangle> iter = rainDrop.getRaindrops().iterator();
 		while (iter.hasNext()) {
@@ -154,12 +154,7 @@ public class Drop implements ApplicationListener {
 		Iterator<Rectangle> aciditer = acidRainDrop.getRaindrops().iterator();
 		while (aciditer.hasNext()) {
 			Rectangle raindrop = aciditer.next();
-			if (numCatches < 10)
-				raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
-			if (numCatches >= 10)
-				raindrop.y -= 300 * Gdx.graphics.getDeltaTime();
-			if (numCatches >= 30)
-				raindrop.y -= 315 * Gdx.graphics.getDeltaTime();
+			raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
 			if (raindrop.overlaps(bucket.getRectangle())) {
 				rainDrop.getSound().play();
 				aciditer.remove();
