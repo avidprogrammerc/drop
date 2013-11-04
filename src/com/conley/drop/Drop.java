@@ -3,7 +3,7 @@
  * All game play is done through this class
  * 
  * @author     Chris Conley
- * @version    2013.10.31
+ * @version    2013.11.04
  ***********************************************************************/
 
 package com.conley.drop;
@@ -125,7 +125,7 @@ public class Drop extends Game {
 				rainDrop.spawnRaindrop();
 			}
 
-		if (TimeUtils.nanoTime() - acidRainDrop.getLastDropTime() > 1000000000) {
+		if (TimeUtils.nanoTime() - acidRainDrop.getLastDropTime() > 750000000) {
 			acidRainDrop.spawnRaindrop();
 		}
 
@@ -154,7 +154,7 @@ public class Drop extends Game {
 		Iterator<Rectangle> aciditer = acidRainDrop.getRaindrops().iterator();
 		while (aciditer.hasNext()) {
 			Rectangle raindrop = aciditer.next();
-			raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
+			raindrop.y -= 400 * Gdx.graphics.getDeltaTime();
 			if (raindrop.overlaps(bucket.getRectangle())) {
 				rainDrop.getSound().play();
 				aciditer.remove();
