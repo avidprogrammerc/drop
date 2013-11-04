@@ -14,32 +14,24 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class Drop implements ApplicationListener {
 	Bucket bucket;
-	Texture dropImage;
-	Sound dropSound;
+	RainDrop rainDrop;
+
 	Music rainMusic;
 
 	OrthographicCamera camera;
 	SpriteBatch batch;
-
-	Array<Rectangle> raindrops;
-
-	long lastDropTime;
 
 	int numMisses;
 	int numCatches;
@@ -50,12 +42,10 @@ public class Drop implements ApplicationListener {
 
 	@Override
 	public void create() {
-		// load the images for the droplet and the bucket, 64x64 pixels each
-		dropImage = new Texture(Gdx.files.internal("droplet.png"));
 		bucket = new Bucket(800 / 2 - 64 / 2, 0);
+		rainDrop = new RainDrop();
 
-		// load the drop sound effect and the rain background "music"
-		dropSound = Gdx.audio.newSound(Gdx.files.internal("droplet.wav"));
+		// load the rain background "music"
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
 		// start the playback of the background music immediately
@@ -66,9 +56,6 @@ public class Drop implements ApplicationListener {
 		camera.setToOrtho(false, 800, 480);
 
 		batch = new SpriteBatch();
-
-		raindrops = new Array<Rectangle>();
-		spawnRaindrop();
 
 		numMisses = 0;
 		numCatches = 0;
@@ -81,9 +68,9 @@ public class Drop implements ApplicationListener {
 
 	@Override
 	public void dispose() {
-		dropImage.dispose();
+		rainDrop.disposeImage();
 		bucket.disposeImage();
-		dropSound.dispose();
+		rainDrop.disposeSound();
 		rainMusic.dispose();
 		batch.dispose();
 	}
@@ -117,19 +104,19 @@ public class Drop implements ApplicationListener {
 			bucket.setX(800 - 64);
 
 		if (numCatches < 10)
-			if (TimeUtils.nanoTime() - lastDropTime > 1000000000)
-				spawnRaindrop();
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 1000000000)
+				rainDrop.spawnRaindrop();
 		if (numCatches >= 10)
-			if (TimeUtils.nanoTime() - lastDropTime > 750000000)
-				spawnRaindrop();
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 750000000)
+				rainDrop.spawnRaindrop();
 		if (numCatches >= 20)
-			if (TimeUtils.nanoTime() - lastDropTime > 500000000)
-				spawnRaindrop();
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 500000000)
+				rainDrop.spawnRaindrop();
 		if (numCatches >= 30)
-			if (TimeUtils.nanoTime() - lastDropTime > 250000000)
-				spawnRaindrop();
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 250000000)
+				rainDrop.spawnRaindrop();
 
-		Iterator<Rectangle> iter = raindrops.iterator();
+		Iterator<Rectangle> iter = rainDrop.getRaindrops().iterator();
 		while (iter.hasNext()) {
 			Rectangle raindrop = iter.next();
 			if (numCatches < 10)
@@ -144,7 +131,7 @@ public class Drop implements ApplicationListener {
 				misses = "Missed catches: " + numMisses;
 			}
 			if (raindrop.overlaps(bucket.bucket)) {
-				dropSound.play();
+				rainDrop.getSound().play();
 				iter.remove();
 				numCatches++;
 				score = "Score: " + numCatches;
@@ -153,8 +140,8 @@ public class Drop implements ApplicationListener {
 
 		batch.begin();
 		batch.draw(bucket.getBucketImage(), bucket.getX(), bucket.getY());
-		for (Rectangle raindrop : raindrops) {
-			batch.draw(dropImage, raindrop.x, raindrop.y);
+		for (Rectangle raindrop : rainDrop.getRaindrops()) {
+			batch.draw(rainDrop.getImage(), raindrop.x, raindrop.y);
 		}
 		batch.end();
 
@@ -177,15 +164,5 @@ public class Drop implements ApplicationListener {
 
 	@Override
 	public void resume() {
-	}
-
-	private void spawnRaindrop() {
-		Rectangle raindrop = new Rectangle();
-		raindrop.x = MathUtils.random(0, 800 - 64);
-		raindrop.y = 480;
-		raindrop.width = 64;
-		raindrop.height = 64;
-		raindrops.add(raindrop);
-		lastDropTime = TimeUtils.nanoTime();
 	}
 }
