@@ -24,11 +24,13 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.conley.drop.bucket.Bucket;
+import com.conley.drop.dropTypes.AcidRainDrop;
 import com.conley.drop.dropTypes.RainDrop;
 
 public class Drop implements ApplicationListener {
 	Bucket bucket;
 	RainDrop rainDrop;
+	AcidRainDrop acidRainDrop;
 
 	Music rainMusic;
 
@@ -46,6 +48,7 @@ public class Drop implements ApplicationListener {
 	public void create() {
 		bucket = new Bucket(800 / 2 - 64 / 2, 0);
 		rainDrop = new RainDrop();
+		acidRainDrop = new AcidRainDrop();
 
 		// load the rain background "music"
 		rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
@@ -106,17 +109,25 @@ public class Drop implements ApplicationListener {
 			bucket.setX(800 - 64);
 
 		if (numCatches < 10)
-			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 1000000000)
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 1000000000) {
 				rainDrop.spawnRaindrop();
+				acidRainDrop.spawnRaindrop();
+			}
 		if (numCatches >= 10)
-			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 750000000)
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 750000000) {
 				rainDrop.spawnRaindrop();
+				acidRainDrop.spawnRaindrop();
+			}
 		if (numCatches >= 20)
-			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 500000000)
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 500000000) {
 				rainDrop.spawnRaindrop();
+				acidRainDrop.spawnRaindrop();
+			}
 		if (numCatches >= 30)
-			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 250000000)
+			if (TimeUtils.nanoTime() - rainDrop.getLastDropTime() > 250000000) {
 				rainDrop.spawnRaindrop();
+				acidRainDrop.spawnRaindrop();
+			}
 
 		Iterator<Rectangle> iter = rainDrop.getRaindrops().iterator();
 		while (iter.hasNext()) {
@@ -140,10 +151,31 @@ public class Drop implements ApplicationListener {
 			}
 		}
 
+		Iterator<Rectangle> aciditer = acidRainDrop.getRaindrops().iterator();
+		while (aciditer.hasNext()) {
+			Rectangle raindrop = aciditer.next();
+			if (numCatches < 10)
+				raindrop.y -= 200 * Gdx.graphics.getDeltaTime();
+			if (numCatches >= 10)
+				raindrop.y -= 300 * Gdx.graphics.getDeltaTime();
+			if (numCatches >= 30)
+				raindrop.y -= 315 * Gdx.graphics.getDeltaTime();
+			if (raindrop.overlaps(bucket.getRectangle())) {
+				rainDrop.getSound().play();
+				aciditer.remove();
+				numCatches--;
+				score = "Score: " + numCatches;
+			}
+		}
+
 		batch.begin();
 		batch.draw(bucket.getBucketImage(), bucket.getX(), bucket.getY());
 		for (Rectangle raindrop : rainDrop.getRaindrops()) {
 			batch.draw(rainDrop.getImage(), raindrop.x, raindrop.y);
+		}
+		for (Rectangle raindrop : acidRainDrop.getRaindrops()) {
+			batch.draw(acidRainDrop.getImage(), raindrop.x, raindrop.y, 64f,
+					64f);
 		}
 		batch.end();
 
