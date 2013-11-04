@@ -1,4 +1,12 @@
-package com.conley.drop;
+/***********************************************************************
+ * This class represents the rain drops in the game
+ * It uses an Array to store the raindrops in.
+ * 
+ * @author Chris Conley
+ * @version      2013.11.03
+ ***********************************************************************/
+
+package com.conley.drop.dropTypes;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;

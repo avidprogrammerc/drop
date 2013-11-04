@@ -1,12 +1,12 @@
-/**
+/***********************************************************************
  * This class represents the Bucket in the game
  * The constructor allows for custom placement on the game screen
  * 
  * @author Chris Conley
  * @version      2013.11.03
- */
+ ***********************************************************************/
 
-package com.conley.drop;
+package com.conley.drop.bucket;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -47,5 +47,9 @@ public class Bucket {
 
 	public void setY(float newYPos) {
 		bucket.y = newYPos;
+	}
+
+	public Rectangle getRectangle() {
+		return bucket;
 	}
 }

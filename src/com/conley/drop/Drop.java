@@ -1,6 +1,6 @@
 /***********************************************************************
- * This is the core file for the Speed Runner game
- * This file should only really be modified.
+ * This is the core file for the Speed Runner game.
+ * All game play is done through this class
  * 
  * @author     Chris Conley
  * @version    2013.10.31
@@ -23,6 +23,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.conley.drop.bucket.Bucket;
+import com.conley.drop.dropTypes.RainDrop;
 
 public class Drop implements ApplicationListener {
 	Bucket bucket;
@@ -130,7 +132,7 @@ public class Drop implements ApplicationListener {
 				numMisses++;
 				misses = "Missed catches: " + numMisses;
 			}
-			if (raindrop.overlaps(bucket.bucket)) {
+			if (raindrop.overlaps(bucket.getRectangle())) {
 				rainDrop.getSound().play();
 				iter.remove();
 				numCatches++;
